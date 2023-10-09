@@ -6,41 +6,40 @@ import (
 	"fmt"
 )
 
-// Block represents a block in a blockchain.
 type Block struct {
-	Transaction  string
-	Nonce        int
-	PreviousHash string
-	Hash         string
+	Trans    string
+	Nonce    int
+	PrevHash string
+	Hash     string
 }
 
-// CreateHash generates the hash for a block.
-func CreateHash(b Block) string {
-	data := fmt.Sprintf("%s%d%s", b.Transaction, b.Nonce, b.PreviousHash)
+// Generates the hash for a block.
+func CreateHash(blo Block) string {
+	data := fmt.Sprintf("%s%d%s", blo.Trans, blo.Nonce, blo.PrevHash)
 	hash := sha256.Sum256([]byte(data))
 	return hex.EncodeToString(hash[:])
 }
 
-// CalculateHash calculates the SHA-256 hash of a given string.
-func CalculateHash(stringToHash string) string {
-	hash := sha256.Sum256([]byte(stringToHash))
+// Calculates the SHA-256 hash.
+func CalculateHash(strtohash string) string {
+	hash := sha256.Sum256([]byte(strtohash))
 	return hex.EncodeToString(hash[:])
 }
 
-// NewBlock creates a new block with the given transaction, nonce, and previous hash.
-func NewBlock(transaction string, nonce int, previousHash string) *Block {
+// Creates a new block.
+func AddBlock(trans string, nonce int, prevHash string) *Block {
 	block := Block{
-		Transaction:  transaction,
-		Nonce:        nonce,
-		PreviousHash: previousHash,
+		Trans:    trans,
+		Nonce:    nonce,
+		PrevHash: prevHash,
 	}
 	block.Hash = CreateHash(block)
 	return &block
 }
 
-// ChangeBlock modifies the transaction of a given block.
-func ChangeBlock(block *Block, newTransaction string) {
-	block.Transaction = newTransaction
+// Modifies the Transaction of a given block.
+func EditBlock(block *Block, newTrans string) {
+	block.Trans = newTrans
 	block.Hash = CreateHash(*block)
 }
 
@@ -50,8 +49,8 @@ func VerifyChain(blocks []*Block) bool {
 		currentBlock := blocks[i]
 		previousBlock := blocks[i-1]
 
-		// Verify that the current block's PreviousHash matches the hash of the previous block.
-		if currentBlock.PreviousHash != CreateHash(*previousBlock) {
+		// Verify that the current block's PrevHash matches the hash of the previous block.
+		if currentBlock.PrevHash != CreateHash(*previousBlock) {
 			return false
 		}
 
@@ -70,9 +69,9 @@ func DisplayBlocks(blocks []*Block) {
 	fmt.Println("--------------------------------------------------------")
 
 	for _, block := range blocks {
-		fmt.Printf("Transaction: %s\n", block.Transaction)
+		fmt.Printf("Trans: %s\n", block.Trans)
 		fmt.Printf("Nonce: %d\n", block.Nonce)
-		fmt.Printf("Previous Hash: %s\n", block.PreviousHash)
+		fmt.Printf("Previous Hash: %s\n", block.PrevHash)
 		fmt.Printf("Block Hash: %s\n", block.Hash)
 		fmt.Println()
 		fmt.Println("--------------------------------------------------------")
@@ -81,9 +80,9 @@ func DisplayBlocks(blocks []*Block) {
 
 func main() {
 	// Create some example blocks.
-	block1 := NewBlock("Alice to Bob", 12345, "genesis_block_hash")
-	block2 := NewBlock("Bob to Carol", 67890, block1.Hash)
-	block3 := NewBlock("Carol to Dave", 98765, block2.Hash)
+	block1 := AddBlock("Uzair to Yusra", 32345, "genesis_block_hash")
+	block2 := AddBlock("Yusra to Arnish", 87190, block1.Hash)
+	block3 := AddBlock("Umoo to Umoo", 23445, block2.Hash)
 
 	// Create a slice to hold the blocks.
 	blocks := []*Block{block1, block2, block3}
@@ -93,11 +92,11 @@ func main() {
 	fmt.Println("BlockChain Before Changes .....")
 	DisplayBlocks(blocks)
 
-	// Change the transaction of block2.
-	newTransaction := "Mallory to Eve"
-	ChangeBlock(block2, newTransaction)
+	// Change the Trans of block2.
+	newTrans := "Mallory to Eve"
+	EditBlock(block2, newTrans)
 
-	// Display the blocks after changing block2's transaction.
+	// Display the blocks after changing block2's Trans.
 
 	fmt.Println()
 	fmt.Println("BlockChain After Changes .....")
@@ -113,7 +112,7 @@ func main() {
 	}
 
 	// Calculate the hash of block3.
-	block3Hash := CalculateHash(fmt.Sprintf("%s%d%s", block3.Transaction, block3.Nonce, block3.PreviousHash))
+	block3Hash := CalculateHash(fmt.Sprintf("%s%d%s", block3.Trans, block3.Nonce, block3.PrevHash))
 
 	fmt.Println()
 	// Display the hash of block3.
